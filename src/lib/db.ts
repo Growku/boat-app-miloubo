@@ -16,14 +16,25 @@ export function getDb(): Database.Database {
 
   // Ensure data directory exists
   const dir = path.dirname(DB_PATH);
+  console.log("[db] Initializing database at:", DB_PATH);
   if (!fs.existsSync(dir)) {
+    console.log("[db] Creating data directory:", dir);
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  db = new Database(DB_PATH);
+  try {
+    db = new Database(DB_PATH);
+  } catch (err) {
+    console.error("[db] Failed to open SQLite database at", DB_PATH, err);
+    throw err;
+  }
 
   // Enable WAL mode for better concurrent read performance
-  db.pragma("journal_mode = WAL");
+  try {
+    db.pragma("journal_mode = WAL");
+  } catch (err) {
+    console.error("[db] WAL pragma failed (non-fatal):", err);
+  }
 
   // Check if tables exist
   const tableCheck = db.prepare(
@@ -31,8 +42,10 @@ export function getDb(): Database.Database {
   ).get();
 
   if (!tableCheck) {
+    console.log("[db] No tables found — running initializeDb");
     initializeDb(db);
   } else {
+    console.log("[db] Tables exist — running migrateDb");
     migrateDb(db);
   }
 

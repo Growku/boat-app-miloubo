@@ -102,9 +102,15 @@ export default function Home() {
   // Fetch users for login screen
   useEffect(() => {
     fetch("/api/users")
-      .then((res) => res.json())
-      .then(setUsers)
-      .catch(() => {});
+      .then((res) => {
+        if (!res.ok) throw new Error(`API error ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) setUsers(data);
+        else console.error("Expected array from /api/users, got:", data);
+      })
+      .catch((err) => console.error("Failed to fetch users:", err));
   }, []);
 
   const handleLogin = (user: User) => {

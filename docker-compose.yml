@@ -31,7 +31,7 @@ services:
       - "traefik.http.routers.miloubo.tls.certresolver=letsencrypt"
       - "traefik.http.services.miloubo.loadbalancer.server.port=3000"
     volumes:
-      - ${DATA_DIR:-./data}:/app/data
+      - /mnt/HC_Volume_105363923/boat-data:/app/data
     environment:
       - NODE_ENV=production
 
