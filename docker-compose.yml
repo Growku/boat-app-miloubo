@@ -1,11 +1,39 @@
 services:
+  traefik:
+    image: traefik:v3.4
+    restart: unless-stopped
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Redirect all HTTP to HTTPS
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      # Let's Encrypt automatic certificates
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=michael@growku.nl"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "letsencrypt:/letsencrypt"
+
   app:
     build: .
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.miloubo.rule=Host(`miloubo.boertjes.de`)"
+      - "traefik.http.routers.miloubo.entrypoints=websecure"
+      - "traefik.http.routers.miloubo.tls.certresolver=letsencrypt"
+      - "traefik.http.services.miloubo.loadbalancer.server.port=3000"
     volumes:
-      # Point this to your Hetzner volume, e.g. /mnt/HC_Volume_12345/boat-data
       - ${DATA_DIR:-./data}:/app/data
     environment:
       - NODE_ENV=production
+
+volumes:
+  letsencrypt:
