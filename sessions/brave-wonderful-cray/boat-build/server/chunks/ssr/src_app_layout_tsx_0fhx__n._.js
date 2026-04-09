@@ -1,0 +1,3 @@
+module.exports=[27572,a=>{"use strict";var b=a.i(7997);a.s(["default",0,function({children:a}){return(0,b.jsx)("html",{lang:"en",className:"h-full antialiased",children:(0,b.jsx)("body",{className:"min-h-full flex flex-col bg-slate-50 text-gray-900",children:a})})},"metadata",0,{title:"Miloubo — Family Boat",description:"Family boat reservation and tracking app"}])},50645,a=>{a.n(a.i(27572))}];
+
+//# sourceMappingURL=src_app_layout_tsx_0fhx__n._.js.map

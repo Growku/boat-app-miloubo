@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      # Point this to your Hetzner volume, e.g. /mnt/HC_Volume_12345/boat-data
+      - ${DATA_DIR:-./data}:/app/data
+    environment:
+      - NODE_ENV=production

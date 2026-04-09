@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+*.db
+data/
+tmp/
+sessions/
+.env*
+Dockerfile
+.dockerignore
+README.md
+CHANGELOG.md
+PROMPT_*.md

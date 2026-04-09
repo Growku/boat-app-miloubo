@@ -1,0 +1,14 @@
+{
+  "/api/activity/route": "/api/activity",
+  "/_not-found/page": "/_not-found",
+  "/api/auth/route": "/api/auth",
+  "/api/auth/pin/route": "/api/auth/pin",
+  "/api/fuel/latest/route": "/api/fuel/latest",
+  "/api/fuel/route": "/api/fuel",
+  "/api/reservations/[id]/route": "/api/reservations/[id]",
+  "/api/reservations/route": "/api/reservations",
+  "/api/stats/route": "/api/stats",
+  "/favicon.ico/route": "/favicon.ico",
+  "/api/users/route": "/api/users",
+  "/page": "/"
+}

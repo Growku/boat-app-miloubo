@@ -1,0 +1,14 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/activity/route": "/api/activity",
+  "/api/auth/route": "/api/auth",
+  "/api/fuel/latest/route": "/api/fuel/latest",
+  "/api/fuel/route": "/api/fuel",
+  "/api/reservations/[id]/route": "/api/reservations/[id]",
+  "/api/reservations/route": "/api/reservations",
+  "/api/stats/route": "/api/stats",
+  "/api/users/route": "/api/users",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/"
+}

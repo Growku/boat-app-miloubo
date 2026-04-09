@@ -1,0 +1,54 @@
+module.exports=[18622,(e,t,r)=>{t.exports=e.x("next/dist/compiled/next-server/app-page-turbo.runtime.prod.js",()=>require("next/dist/compiled/next-server/app-page-turbo.runtime.prod.js"))},56704,(e,t,r)=>{t.exports=e.x("next/dist/server/app-render/work-async-storage.external.js",()=>require("next/dist/server/app-render/work-async-storage.external.js"))},32319,(e,t,r)=>{t.exports=e.x("next/dist/server/app-render/work-unit-async-storage.external.js",()=>require("next/dist/server/app-render/work-unit-async-storage.external.js"))},24725,(e,t,r)=>{t.exports=e.x("next/dist/server/app-render/after-task-async-storage.external.js",()=>require("next/dist/server/app-render/after-task-async-storage.external.js"))},70406,(e,t,r)=>{t.exports=e.x("next/dist/compiled/@opentelemetry/api",()=>require("next/dist/compiled/@opentelemetry/api"))},14747,(e,t,r)=>{t.exports=e.x("path",()=>require("path"))},93695,(e,t,r)=>{t.exports=e.x("next/dist/shared/lib/no-fallback-error.external.js",()=>require("next/dist/shared/lib/no-fallback-error.external.js"))},25302,(e,t,r)=>{t.exports=e.x("sql.js-59d66b30daa0a8d2",()=>require("sql.js-59d66b30daa0a8d2"))},22734,(e,t,r)=>{t.exports=e.x("fs",()=>require("fs"))},43793,e=>{"use strict";var t=e.i(25302),r=e.i(22734);let a=e.i(14747).default.join(process.cwd(),"boat.db"),n=null,s=["Lou","Josha","Ruby","Wouter","Corine","Maarten","Nicole","Tom","Michael","Bob","Reinout"];async function i(){if(n)return n;let e=await (0,t.default)();if(r.default.existsSync(a)){let t=r.default.readFileSync(a);var i=n=new e.Database(t);try{i.exec("SELECT pin FROM users LIMIT 1")}catch{i.run("ALTER TABLE users ADD COLUMN pin TEXT NOT NULL DEFAULT '0000'")}try{i.exec("SELECT cancelled_at FROM reservations LIMIT 1")}catch{i.run("ALTER TABLE reservations ADD COLUMN cancelled_at TEXT DEFAULT NULL")}i.run(`
+    CREATE TABLE IF NOT EXISTS activity_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      action TEXT NOT NULL,
+      target_date TEXT,
+      detail TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `),o(i)}else{var l=n=new e.Database;l.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE NOT NULL,
+      pin TEXT NOT NULL DEFAULT '0000'
+    )
+  `),l.run(`
+    CREATE TABLE IF NOT EXISTS reservations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      date TEXT NOT NULL UNIQUE,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      cancelled_at TEXT DEFAULT NULL
+    )
+  `),l.run(`
+    CREATE TABLE IF NOT EXISTS fuel_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      tank_level INTEGER NOT NULL CHECK(tank_level >= 0 AND tank_level <= 8),
+      jerry_cans_full INTEGER NOT NULL DEFAULT 0,
+      jerry_cans_empty INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `),l.run(`
+    CREATE TABLE IF NOT EXISTS activity_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      action TEXT NOT NULL,
+      target_date TEXT,
+      detail TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `);let t=l.prepare("INSERT OR IGNORE INTO users (name, pin) VALUES (?, '0000')");for(let e of s)t.run([e]);t.free(),l.run("INSERT INTO fuel_logs (user_id, tank_level, jerry_cans_full, jerry_cans_empty) VALUES (1, 8, 0, 0)"),o(l)}return n}function o(e){let t=e||n;if(!t)return;let s=t.export(),i=Buffer.from(s);r.default.writeFileSync(a,i)}e.s(["getDb",0,i,"saveDb",0,o])},18816,e=>{"use strict";var t=e.i(47909),r=e.i(74017),a=e.i(96250),n=e.i(59756),s=e.i(61916),i=e.i(74677),o=e.i(69741),l=e.i(16795),u=e.i(87718),d=e.i(95169),E=e.i(47587),p=e.i(66012),c=e.i(70101),T=e.i(26937),R=e.i(10372),N=e.i(93695);e.i(52474);var h=e.i(220),x=e.i(89171),L=e.i(43793);async function v(e){let t=await (0,L.getDb)(),{searchParams:r}=new URL(e.url),a=r.get("year")||new Date().getFullYear().toString(),n=t.prepare(`
+    SELECT u.id, u.name, COUNT(r.id) as trip_count
+    FROM users u
+    LEFT JOIN reservations r ON u.id = r.user_id AND r.date LIKE ? || '%'
+    GROUP BY u.id, u.name
+    ORDER BY trip_count DESC, u.name ASC
+  `);n.bind([a]);let s=[];for(;n.step();){let e=n.getAsObject();s.push(e)}n.free();let i=t.exec(`
+    SELECT DISTINCT substr(date, 1, 4) as year
+    FROM reservations
+    ORDER BY year DESC
+  `),o=i.length>0?i[0].values.map(e=>e[0]):[],l=new Date().getFullYear().toString();return o.includes(l)||o.unshift(l),x.NextResponse.json({stats:s,availableYears:o})}e.s(["GET",0,v],43895);var A=e.i(43895);let f=new t.AppRouteRouteModule({definition:{kind:r.RouteKind.APP_ROUTE,page:"/api/stats/route",pathname:"/api/stats",filename:"route",bundlePath:""},distDir:".next-dash",relativeProjectDir:"",resolvedPagePath:"[project]/src/app/api/stats/route.ts",nextConfigOutput:"",userland:A,...{}}),{workAsyncStorage:C,workUnitAsyncStorage:O,serverHooks:g}=f;async function I(e,t,a){a.requestMeta&&(0,n.setRequestMeta)(e,a.requestMeta),f.isDev&&(0,n.addRequestMeta)(e,"devRequestTimingInternalsEnd",process.hrtime.bigint());let x="/api/stats/route";x=x.replace(/\/index$/,"")||"/";let L=await f.prepare(e,t,{srcPage:x,multiZoneDraftMode:!1});if(!L)return t.statusCode=400,t.end("Bad Request"),null==a.waitUntil||a.waitUntil.call(a,Promise.resolve()),null;let{buildId:v,params:A,nextConfig:C,parsedUrl:O,isDraftMode:g,prerenderManifest:I,routerServerContext:U,isOnDemandRevalidate:m,revalidateOnlyGenerated:w,resolvedPathname:_,clientReferenceManifest:y,serverActionsManifest:S}=L,b=(0,o.normalizeAppPath)(x),D=!!(I.dynamicRoutes[b]||I.routes[_]),F=async()=>((null==U?void 0:U.render404)?await U.render404(e,t,O,!1):t.end("This page could not be found"),null);if(D&&!g){let e=!!I.routes[_],t=I.dynamicRoutes[b];if(t&&!1===t.fallback&&!e){if(C.adapterPath)return await F();throw new N.NoFallbackError}}let M=null;!D||f.isDev||g||(M="/index"===(M=_)?"/":M);let P=!0===f.isDev||!D,q=D&&!P;S&&y&&(0,i.setManifestsSingleton)({page:x,clientReferenceManifest:y,serverActionsManifest:S});let j=e.method||"GET",k=(0,s.getTracer)(),X=k.getActiveScopeSpan(),B=!!(null==U?void 0:U.isWrappedByNextServer),G=!!(0,n.getRequestMeta)(e,"minimalMode"),H=(0,n.getRequestMeta)(e,"incrementalCache")||await f.getIncrementalCache(e,C,I,G);null==H||H.resetRequestCache(),globalThis.__incrementalCache=H;let K={params:A,previewProps:I.preview,renderOpts:{experimental:{authInterrupts:!!C.experimental.authInterrupts},cacheComponents:!!C.cacheComponents,supportsDynamicResponse:P,incrementalCache:H,cacheLifeProfiles:C.cacheLife,waitUntil:a.waitUntil,onClose:e=>{t.on("close",e)},onAfterTaskError:void 0,onInstrumentationRequestError:(t,r,a,n)=>f.onRequestError(e,t,a,n,U)},sharedContext:{buildId:v}},Y=new l.NodeNextRequest(e),$=new l.NodeNextResponse(t),V=u.NextRequestAdapter.fromNodeNextRequest(Y,(0,u.signalFromNodeResponse)(t));try{let n,i=async e=>f.handle(V,K).finally(()=>{if(!e)return;e.setAttributes({"http.status_code":t.statusCode,"next.rsc":!1});let r=k.getRootSpanAttributes();if(!r)return;if(r.get("next.span_type")!==d.BaseServerSpan.handleRequest)return void console.warn(`Unexpected root span type '${r.get("next.span_type")}'. Please report this Next.js issue https://github.com/vercel/next.js`);let a=r.get("next.route");if(a){let t=`${j} ${a}`;e.setAttributes({"next.route":a,"http.route":a,"next.span_name":t}),e.updateName(t),n&&n!==e&&(n.setAttribute("http.route",a),n.updateName(t))}else e.updateName(`${j} ${x}`)}),o=async n=>{var s,o;let l=async({previousCacheEntry:r})=>{try{if(!G&&m&&w&&!r)return t.statusCode=404,t.setHeader("x-nextjs-cache","REVALIDATED"),t.end("This page could not be found"),null;let s=await i(n);e.fetchMetrics=K.renderOpts.fetchMetrics;let o=K.renderOpts.pendingWaitUntil;o&&a.waitUntil&&(a.waitUntil(o),o=void 0);let l=K.renderOpts.collectedTags;if(!D)return await (0,p.sendResponse)(Y,$,s,K.renderOpts.pendingWaitUntil),null;{let e=await s.blob(),t=(0,c.toNodeOutgoingHttpHeaders)(s.headers);l&&(t[R.NEXT_CACHE_TAGS_HEADER]=l),!t["content-type"]&&e.type&&(t["content-type"]=e.type);let r=void 0!==K.renderOpts.collectedRevalidate&&!(K.renderOpts.collectedRevalidate>=R.INFINITE_CACHE)&&K.renderOpts.collectedRevalidate,a=void 0===K.renderOpts.collectedExpire||K.renderOpts.collectedExpire>=R.INFINITE_CACHE?void 0:K.renderOpts.collectedExpire;return{value:{kind:h.CachedRouteKind.APP_ROUTE,status:s.status,body:Buffer.from(await e.arrayBuffer()),headers:t},cacheControl:{revalidate:r,expire:a}}}}catch(t){throw(null==r?void 0:r.isStale)&&await f.onRequestError(e,t,{routerKind:"App Router",routePath:x,routeType:"route",revalidateReason:(0,E.getRevalidateReason)({isStaticGeneration:q,isOnDemandRevalidate:m})},!1,U),t}},u=await f.handleResponse({req:e,nextConfig:C,cacheKey:M,routeKind:r.RouteKind.APP_ROUTE,isFallback:!1,prerenderManifest:I,isRoutePPREnabled:!1,isOnDemandRevalidate:m,revalidateOnlyGenerated:w,responseGenerator:l,waitUntil:a.waitUntil,isMinimalMode:G});if(!D)return null;if((null==u||null==(s=u.value)?void 0:s.kind)!==h.CachedRouteKind.APP_ROUTE)throw Object.defineProperty(Error(`Invariant: app-route received invalid cache entry ${null==u||null==(o=u.value)?void 0:o.kind}`),"__NEXT_ERROR_CODE",{value:"E701",enumerable:!1,configurable:!0});G||t.setHeader("x-nextjs-cache",m?"REVALIDATED":u.isMiss?"MISS":u.isStale?"STALE":"HIT"),g&&t.setHeader("Cache-Control","private, no-cache, no-store, max-age=0, must-revalidate");let d=(0,c.fromNodeOutgoingHttpHeaders)(u.value.headers);return G&&D||d.delete(R.NEXT_CACHE_TAGS_HEADER),!u.cacheControl||t.getHeader("Cache-Control")||d.get("Cache-Control")||d.set("Cache-Control",(0,T.getCacheControlHeader)(u.cacheControl)),await (0,p.sendResponse)(Y,$,new Response(u.value.body,{headers:d,status:u.value.status||200})),null};B&&X?await o(X):(n=k.getActiveScopeSpan(),await k.withPropagatedContext(e.headers,()=>k.trace(d.BaseServerSpan.handleRequest,{spanName:`${j} ${x}`,kind:s.SpanKind.SERVER,attributes:{"http.method":j,"http.target":e.url}},o),void 0,!B))}catch(t){if(t instanceof N.NoFallbackError||await f.onRequestError(e,t,{routerKind:"App Router",routePath:b,routeType:"route",revalidateReason:(0,E.getRevalidateReason)({isStaticGeneration:q,isOnDemandRevalidate:m})},!1,U),D)throw t;return await (0,p.sendResponse)(Y,$,new Response(null,{status:500})),null}}e.s(["handler",0,I,"patchFetch",0,function(){return(0,a.patchFetch)({workAsyncStorage:C,workUnitAsyncStorage:O})},"routeModule",0,f,"serverHooks",0,g,"workAsyncStorage",0,C,"workUnitAsyncStorage",0,O],18816)}];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__0q1bpui._.js.map

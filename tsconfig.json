@@ -1,0 +1,77 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.mts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next-build/dev/types/**/*.ts",
+    ".next-build/types/**/*.ts",
+    ".next-build2/dev/types/**/*.ts",
+    ".next-build2/types/**/*.ts",
+    ".next-build3/dev/types/**/*.ts",
+    ".next-build3/types/**/*.ts",
+    ".next-build4/dev/types/**/*.ts",
+    ".next-build4/types/**/*.ts",
+    ".next-dash/dev/types/**/*.ts",
+    ".next-dash/types/**/*.ts",
+    ".next-iter3/dev/types/**/*.ts",
+    ".next-iter3/types/**/*.ts",
+    ".next-iter4/dev/types/**/*.ts",
+    ".next-iter4/types/**/*.ts",
+    ".next-verify/dev/types/**/*.ts",
+    ".next-verify/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    ".next/types/**/*.ts",
+    "/sessions/brave-wonderful-cray/boat-build/dev/types/**/*.ts",
+    "/sessions/brave-wonderful-cray/boat-build/types/**/*.ts",
+    "/sessions/dazzling-serene-curie/boat-build/dev/types/**/*.ts",
+    "/sessions/dazzling-serene-curie/boat-build/types/**/*.ts",
+    "/sessions/dazzling-serene-curie/boat-build2/dev/types/**/*.ts",
+    "/sessions/dazzling-serene-curie/boat-build2/types/**/*.ts",
+    "/sessions/dazzling-serene-curie/boat-build3/dev/types/**/*.ts",
+    "/sessions/dazzling-serene-curie/boat-build3/types/**/*.ts",
+    "/tmp/boat-next-build/dev/types/**/*.ts",
+    "/tmp/boat-next-build/types/**/*.ts",
+    "/tmp/next-build-2/dev/types/**/*.ts",
+    "/tmp/next-build-2/types/**/*.ts",
+    "/tmp/next-build-3/dev/types/**/*.ts",
+    "/tmp/next-build-3/types/**/*.ts",
+    "/tmp/next-build-4/types/**/*.ts",
+    "/tmp/next-build-5/types/**/*.ts",
+    "/tmp/next-build/dev/types/**/*.ts",
+    "/tmp/next-build/types/**/*.ts",
+    "next-env.d.ts",
+    "/tmp/next-build-6/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
