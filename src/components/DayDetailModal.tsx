@@ -65,7 +65,9 @@ export default function DayDetailModal({
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
   const isPast = date < todayStr;
+  const isAdmin = currentUser.is_admin === 1;
   const isOwnReservation = reservation && reservation.user_id === currentUser.id;
+  const canCancel = reservation && (isOwnReservation || isAdmin);
   const canReserve = !reservation && !isPast;
 
   return (
@@ -177,19 +179,21 @@ export default function DayDetailModal({
 
         {/* Actions */}
         <div className="px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-gray-100 dark:border-gray-800">
-          {isOwnReservation && !confirmingCancel && (
+          {canCancel && !confirmingCancel && (
             <button
               onClick={() => setConfirmingCancel(true)}
               disabled={saving}
               className="w-full py-3 text-sm font-medium rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/60 active:bg-red-200 transition-colors disabled:opacity-50"
             >
-              Cancel my reservation
+              {isOwnReservation ? "Cancel my reservation" : `Cancel ${reservation?.user_name}'s reservation`}
             </button>
           )}
-          {isOwnReservation && confirmingCancel && (
+          {canCancel && confirmingCancel && (
             <div className="space-y-2">
               <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-                Are you sure? This frees up {formatFriendlyDate(date).split(",")[0]} for others.
+                {isOwnReservation
+                  ? `Are you sure? This frees up ${formatFriendlyDate(date).split(",")[0]} for others.`
+                  : `Cancel ${reservation?.user_name}'s reservation for ${formatFriendlyDate(date).split(",")[0]}?`}
               </p>
               <div className="flex gap-2">
                 <button
@@ -201,7 +205,7 @@ export default function DayDetailModal({
                 </button>
                 <button
                   onClick={() => {
-                    onCancel(reservation);
+                    if (reservation) onCancel(reservation);
                     onClose();
                   }}
                   disabled={saving}
@@ -224,7 +228,7 @@ export default function DayDetailModal({
               {saving ? "Reserving..." : "Reserve this date"}
             </button>
           )}
-          {!isOwnReservation && !canReserve && (
+          {!canCancel && !canReserve && (
             <button
               onClick={onClose}
               className="w-full py-3 text-sm font-medium rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 transition-colors"

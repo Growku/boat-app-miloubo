@@ -2,7 +2,7 @@ import Database from "better-sqlite3";
 import fs from "fs";
 import path from "path";
 
-const DB_PATH = path.join(process.cwd(), "data", "boat.db");
+const DB_PATH = process.env.DATABASE_PATH || path.join(process.cwd(), "data", "boat.db");
 
 let db: Database.Database | null = null;
 
@@ -44,7 +44,8 @@ function initializeDb(database: Database.Database) {
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT UNIQUE NOT NULL,
-      pin TEXT NOT NULL DEFAULT '0000'
+      pin TEXT NOT NULL DEFAULT '0000',
+      is_admin INTEGER NOT NULL DEFAULT 0
     )
   `);
 
@@ -85,11 +86,11 @@ function initializeDb(database: Database.Database) {
     )
   `);
 
-  // Seed users with default PIN 0000
-  const insert = database.prepare("INSERT OR IGNORE INTO users (name, pin) VALUES (?, '0000')");
+  // Seed users with default PIN 0000, Michael as admin
+  const insert = database.prepare("INSERT OR IGNORE INTO users (name, pin, is_admin) VALUES (?, '0000', ?)");
   const seedAll = database.transaction(() => {
     for (const name of USERS) {
-      insert.run(name);
+      insert.run(name, name === "Michael" ? 1 : 0);
     }
   });
   seedAll();
@@ -105,6 +106,12 @@ function migrateDb(database: Database.Database) {
   const userCols = database.prepare("PRAGMA table_info(users)").all() as Array<{ name: string }>;
   if (!userCols.some((c) => c.name === "pin")) {
     database.exec("ALTER TABLE users ADD COLUMN pin TEXT NOT NULL DEFAULT '0000'");
+  }
+
+  // Add is_admin column if missing, set Michael as admin
+  if (!userCols.some((c) => c.name === "is_admin")) {
+    database.exec("ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0");
+    database.prepare("UPDATE users SET is_admin = 1 WHERE name = 'Michael'").run();
   }
 
   // Add cancelled_at column to reservations if missing

@@ -10,8 +10,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "user_id and pin are required" }, { status: 400 });
   }
 
-  const user = db.prepare("SELECT id, name, pin FROM users WHERE id = ?").get(Number(user_id)) as
-    | { id: number; name: string; pin: string }
+  const user = db.prepare("SELECT id, name, pin, is_admin FROM users WHERE id = ?").get(Number(user_id)) as
+    | { id: number; name: string; pin: string; is_admin: number }
     | undefined;
 
   if (!user) {
@@ -22,5 +22,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Incorrect PIN" }, { status: 401 });
   }
 
-  return NextResponse.json({ id: user.id, name: user.name });
+  return NextResponse.json({ id: user.id, name: user.name, is_admin: user.is_admin });
 }

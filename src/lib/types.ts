@@ -2,6 +2,7 @@ export interface User {
   id: number;
   name: string;
   pin?: string;
+  is_admin?: number;
 }
 
 export interface Reservation {

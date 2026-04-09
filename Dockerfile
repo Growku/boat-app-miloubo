@@ -22,6 +22,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
+ENV DATABASE_PATH=/app/data/boat.db
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \
